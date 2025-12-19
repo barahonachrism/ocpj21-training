@@ -61,7 +61,7 @@ This project now includes a full-stack Exam Simulator to practice for the 1Z0-83
    ```
 3. Start the application:
    ```bash
-   ng serve
+   npm start
    ```
    Navigate to `http://localhost:4200/`.
 
