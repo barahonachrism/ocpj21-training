@@ -1,0 +1,41 @@
+<div class="exam-container" *ngIf="exam && !loading">
+    <div class="header">
+        <div class="timer">Time Remaining: {{ formattedTime$ | async }}</div>
+        <div class="progress">Question {{ currentQuestionIndex + 1 }} of {{ exam.questions.length }}</div>
+        <button class="submit-btn" (click)="submit()">Submit Exam</button>
+    </div>
+
+    <div class="question-card" *ngIf="currentQuestion">
+        <div class="question-text">
+            <h3>{{ currentQuestionIndex + 1 }}. <markdown [data]="currentQuestion.text"></markdown>
+            </h3>
+        </div>
+
+        <div class="options">
+            <div class="option" *ngFor="let option of currentQuestion.options"
+                [class.selected]="isSelected(option.label)" (click)="toggleOption(option.label)">
+
+                <div class="option-input">
+                    <input type="checkbox" *ngIf="isMultipleChoice(currentQuestion)"
+                        [checked]="isSelected(option.label)"
+                        (click)="$event.stopPropagation(); toggleOption(option.label)">
+
+                    <input type="radio" *ngIf="!isMultipleChoice(currentQuestion)" [checked]="isSelected(option.label)"
+                        name="questionOptions" (click)="$event.stopPropagation(); toggleOption(option.label)">
+                </div>
+
+                <div class="option-label">{{ option.label }}</div>
+                <div class="option-text">
+                    <markdown [data]="option.text"></markdown>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button (click)="prev()" [disabled]="currentQuestionIndex === 0">Previous</button>
+        <button (click)="next()" [disabled]="currentQuestionIndex === exam.questions.length - 1">Next</button>
+    </div>
+</div>
+
+<div *ngIf="loading" class="loading">Loading Exam...</div>

@@ -1,0 +1,121 @@
+.exam-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.timer {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #dc3545;
+}
+
+.question-card {
+    background: white;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Markdown Styles */
+::ng-deep pre {
+    background-color: #f1f1f1;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+::ng-deep code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f1f1f1;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+::ng-deep p {
+    margin-bottom: 10px;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.option-text {
+    flex: 1;
+    min-width: 0;
+    /* Allows text truncation/wrapping in flex child */
+    overflow-x: auto;
+}
+
+/* Ensure markdown content doesn't overflow */
+::ng-deep .option-text pre,
+::ng-deep .option-text code {
+    max-width: 100%;
+    white-space: pre-wrap;
+    /* Optional: wrap code if preferred, or keep scrolling */
+}
+
+.option:hover {
+    background-color: #e9ecef;
+}
+
+.option.selected {
+    background-color: #e3f2fd;
+    border-color: #007bff;
+}
+
+.option-label {
+    font-weight: bold;
+    margin-right: 15px;
+    min-width: 25px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #6c757d;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.submit-btn {
+    background-color: #28a745;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}

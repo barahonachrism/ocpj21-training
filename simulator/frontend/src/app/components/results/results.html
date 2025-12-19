@@ -1,0 +1,49 @@
+<div class="results-container" *ngIf="exam && !loading">
+    <div class="score-card" [class.passed]="exam.passed" [class.failed]="!exam.passed">
+        <h1>{{ exam.passed ? 'Congratulations! You Passed!' : 'Sorry, You Failed.' }}</h1>
+        <div class="score">
+            Score: {{ exam.score }} / {{ exam.questions.length }} ({{ (exam.score! / exam.questions.length * 100) |
+            number:'1.0-0' }}%)
+        </div>
+        <div class="info">Passing Score: 68%</div>
+        <button routerLink="/" class="restart-btn">Back to Home</button>
+    </div>
+
+    <div class="questions-review">
+        <h2>Review Questions</h2>
+        <div class="question-item" *ngFor="let eq of exam.questions; let i = index" [class.correct]="eq.isCorrect"
+            [class.incorrect]="!eq.isCorrect">
+            <div class="question-header" (click)="toggleExpand(eq.question.id)">
+                <span class="status-icon">{{ eq.isCorrect ? '✓' : '✗' }}</span>
+                <span class="question-title">Question {{ i + 1 }}</span>
+                <span class="expand-icon">{{ expandedQuestions[eq.question.id] ? '▲' : '▼' }}</span>
+            </div>
+
+            <div class="question-details" *ngIf="expandedQuestions[eq.question.id]">
+                <div class="q-text">
+                    <markdown [data]="eq.question.text"></markdown>
+                </div>
+                <div class="code-snippet" *ngIf="eq.question.codeSnippet">
+                    <pre><code>{{ eq.question.codeSnippet }}</code></pre>
+                </div>
+
+                <div class="answers-comparison">
+                    <div class="user-answer">
+                        <strong>Your Answer:</strong> {{ eq.selectedOptions.join(', ') || 'None' }}
+                    </div>
+                    <div class="correct-answer">
+                        <strong>Correct Answer:</strong> {{ eq.question.correctAnswers?.join(', ') }}
+                    </div>
+                </div>
+
+                <div class="explanation" *ngIf="eq.question.explanation">
+                    <strong>Explanation:</strong>
+                    <markdown [data]="eq.question.explanation"></markdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="loading" class="loading">Loading Results...</div>
+<div *ngIf="error" class="error-message">{{ error }}</div>
