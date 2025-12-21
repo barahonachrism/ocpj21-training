@@ -13,9 +13,8 @@ echo "Using Project ID: $PROJECT_ID"
 
 # 1. Build and Push Backend to Artifact Registry
 echo "Building backend Docker image..."
-cd simulator/backend
 gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
-docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:latest .
+docker build -f simulator/backend/Dockerfile -t us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:latest .
 docker push us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:latest
 
 # 2. Deploy Backend to Cloud Run

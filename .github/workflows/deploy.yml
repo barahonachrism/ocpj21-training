@@ -33,8 +33,7 @@ jobs:
       # 1. Build and Push Backend
       - name: Build and Push Backend Image
         run: |
-          cd simulator/backend
-          docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:${{ github.sha }} .
+          docker build -f simulator/backend/Dockerfile -t us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:${{ github.sha }} .
           docker push us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:${{ github.sha }}
 
       # 2. Deploy Backend to Cloud Run
