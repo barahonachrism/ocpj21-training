@@ -28,14 +28,14 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Configure Docker for GCP
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
       # 1. Build and Push Backend
       - name: Build and Push Backend Image
         run: |
           cd simulator/backend
-          docker build -t gcr.io/$PROJECT_ID/$BACKEND_SERVICE_NAME:${{ github.sha }} .
-          docker push gcr.io/$PROJECT_ID/$BACKEND_SERVICE_NAME:${{ github.sha }}
+          docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:${{ github.sha }} .
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:${{ github.sha }}
 
       # 2. Deploy Backend to Cloud Run
       - name: Deploy Backend to Cloud Run
@@ -43,7 +43,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ env.BACKEND_SERVICE_NAME }}
-          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE_NAME }}:${{ github.sha }}
+          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/ocpj21-simulator/${{ env.BACKEND_SERVICE_NAME }}:${{ github.sha }}
           region: ${{ env.REGION }}
           flags: '--allow-unauthenticated --set-env-vars=SPRING_PROFILES_ACTIVE=prod'
 

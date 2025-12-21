@@ -14,12 +14,14 @@ echo "Using Project ID: $PROJECT_ID"
 # 1. Build and Push Backend to Artifact Registry
 echo "Building backend Docker image..."
 cd simulator/backend
-gcloud builds submit --tag gcr.io/$PROJECT_ID/$BACKEND_SERVICE_NAME
+gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:latest .
+docker push us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:latest
 
 # 2. Deploy Backend to Cloud Run
 echo "Deploying backend to Cloud Run..."
 gcloud run deploy $BACKEND_SERVICE_NAME \
-  --image gcr.io/$PROJECT_ID/$BACKEND_SERVICE_NAME \
+  --image us-central1-docker.pkg.dev/$PROJECT_ID/ocpj21-simulator/$BACKEND_SERVICE_NAME:latest \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated \
