@@ -25,7 +25,7 @@ gcloud run deploy $BACKEND_SERVICE_NAME \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated \
-  --set-env-vars="SPRING_PROFILES_ACTIVE=prod"
+  --set-env-vars="SPRING_PROFILES_ACTIVE=prod,SPRING_CLOUD_GCP_FIRESTORE_DATABASE_ID=ocpj21-store"
 
 # Get the Cloud Run URL
 BACKEND_URL=$(gcloud run services describe $BACKEND_SERVICE_NAME --platform managed --region $REGION --format 'value(status.url)')

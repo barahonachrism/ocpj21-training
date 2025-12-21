@@ -45,7 +45,7 @@ jobs:
           service: ${{ env.BACKEND_SERVICE_NAME }}
           image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/ocpj21-simulator/${{ env.BACKEND_SERVICE_NAME }}:${{ github.sha }}
           region: ${{ env.REGION }}
-          flags: '--allow-unauthenticated --set-env-vars=SPRING_PROFILES_ACTIVE=prod'
+          flags: '--allow-unauthenticated --set-env-vars=SPRING_PROFILES_ACTIVE=prod,SPRING_CLOUD_GCP_FIRESTORE_DATABASE_ID=ocpj21-store'
 
       # 3. Build and Deploy Frontend
       - name: Set up Node.js
