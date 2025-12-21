@@ -1,0 +1,75 @@
+name: Build and Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main
+      - feature/gcp-firestore
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  BACKEND_SERVICE_NAME: simulator-backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker --quiet
+
+      # 1. Build and Push Backend
+      - name: Build and Push Backend Image
+        run: |
+          cd simulator/backend
+          docker build -t gcr.io/$PROJECT_ID/$BACKEND_SERVICE_NAME:${{ github.sha }} .
+          docker push gcr.io/$PROJECT_ID/$BACKEND_SERVICE_NAME:${{ github.sha }}
+
+      # 2. Deploy Backend to Cloud Run
+      - name: Deploy Backend to Cloud Run
+        id: deploy-backend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.BACKEND_SERVICE_NAME }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE_NAME }}:${{ github.sha }}
+          region: ${{ env.REGION }}
+          flags: '--allow-unauthenticated --set-env-vars=SPRING_PROFILES_ACTIVE=prod'
+
+      # 3. Build and Deploy Frontend
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd simulator/frontend
+          npm install
+
+      - name: Build Frontend
+        run: |
+          cd simulator/frontend
+          # Replace the placeholder URL with the actual Cloud Run URL
+          sed -i "s|YOUR_CLOUD_RUN_BACKEND_URL|${{ steps.deploy-backend.outputs.url }}|g" src/environments/environment.prod.ts
+          npm run build -- --configuration production
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.GCP_SA_KEY }}
+          channelId: live
+          projectId: ${{ env.PROJECT_ID }}
+          entryPoint: simulator/frontend
