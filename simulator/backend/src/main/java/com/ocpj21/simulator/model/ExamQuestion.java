@@ -5,6 +5,10 @@ import lombok.Data;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Entity representing a specific question within an exam session.
+ * Stores the user's selected options and whether the answer was correct.
+ */
 @Entity
 @Data
 public class ExamQuestion {

@@ -12,17 +12,33 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing exams.
+ * Handles starting new exams, submitting answers, and retrieving results.
+ */
 @Service
 public class ExamService {
 
     private final ExamRepository examRepository;
     private final QuestionRepository questionRepository;
 
+    /**
+     * Constructs an ExamService with the necessary repositories.
+     *
+     * @param examRepository     the repository for managing Exam entities
+     * @param questionRepository the repository for managing Question entities
+     */
     public ExamService(ExamRepository examRepository, QuestionRepository questionRepository) {
         this.examRepository = examRepository;
         this.questionRepository = questionRepository;
     }
 
+    /**
+     * Starts a new exam by selecting 50 random questions.
+     *
+     * @return the newly created Exam entity
+     * @throws RuntimeException if no questions are available in the repository
+     */
     @Transactional
     public Exam startExam() {
         List<Question> allQuestions = questionRepository.findAll();
@@ -51,6 +67,15 @@ public class ExamService {
         return examRepository.save(exam);
     }
 
+    /**
+     * Submits an exam by recording the user's answers and calculating the score.
+     *
+     * @param examId  the ID of the exam being submitted
+     * @param answers a map of question IDs to the list of selected option labels
+     * @return the updated Exam entity with results
+     * @throws RuntimeException if the exam is not found or has already been
+     *                          submitted
+     */
     @Transactional
     public Exam submitExam(Long examId, Map<Long, List<String>> answers) {
         Exam exam = examRepository.findById(examId)
@@ -85,6 +110,13 @@ public class ExamService {
         return examRepository.save(exam);
     }
 
+    /**
+     * Retrieves an exam by its ID and initializes lazy collections.
+     *
+     * @param id the ID of the exam to retrieve
+     * @return the Exam entity
+     * @throws RuntimeException if the exam is not found
+     */
     @Transactional(readOnly = true)
     public Exam getExam(Long id) {
         System.out.println("ExamService: getExam called for id: " + id);
@@ -101,6 +133,12 @@ public class ExamService {
         return exam;
     }
 
+    /**
+     * Retrieves the results of an exam and maps them to a DTO.
+     *
+     * @param id the ID of the exam
+     * @return an ExamResultDTO containing the exam details and results
+     */
     @Transactional(readOnly = true)
     public com.ocpj21.simulator.dto.ExamResultDTO getExamResult(Long id) {
         Exam exam = getExam(id);

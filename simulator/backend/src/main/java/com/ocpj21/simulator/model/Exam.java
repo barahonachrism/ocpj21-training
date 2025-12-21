@@ -6,6 +6,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Entity representing an exam session.
+ * Tracks the start and end times, score, and the set of questions included in
+ * the exam.
+ */
 @Entity
 @Data
 public class Exam {

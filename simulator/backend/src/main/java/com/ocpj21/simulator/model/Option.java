@@ -3,6 +3,9 @@ package com.ocpj21.simulator.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing an answer option for a question.
+ */
 @Entity
 @Data
 public class Option {

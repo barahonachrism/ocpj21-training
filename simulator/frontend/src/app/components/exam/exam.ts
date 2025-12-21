@@ -8,6 +8,10 @@ import { TimerService } from '../../services/timer.service';
 
 import { MarkdownModule } from 'ngx-markdown';
 
+/**
+ * Component for taking an exam.
+ * Manages the exam state, timer, and user answers.
+ */
 @Component({
   selector: 'app-exam',
   standalone: true,
@@ -16,13 +20,25 @@ import { MarkdownModule } from 'ngx-markdown';
   styleUrls: ['./exam.css'],
 })
 export class ExamComponent implements OnInit, OnDestroy {
+  /** The current exam being taken. */
   exam: Exam | null = null;
+  /** Loading state flag. */
   loading = true;
+  /** Index of the current question being displayed. */
   currentQuestionIndex = 0;
+  /** Map of question IDs to user-selected option labels. */
   answers: { [key: number]: string[] } = {};
+  /** Formatted remaining time string. */
   remainingTime = '02:00:00';
   private timerSub?: Subscription;
 
+  /**
+   * Constructs the ExamComponent.
+   * @param examService Service for exam-related API calls.
+   * @param timerService Service for managing the exam timer.
+   * @param router Router for navigation.
+   * @param cdr ChangeDetectorRef for manual change detection.
+   */
   constructor(
     private examService: ExamService,
     private timerService: TimerService,
@@ -30,6 +46,9 @@ export class ExamComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) { }
 
+  /**
+   * Initializes the component by starting a new exam and setting up the timer.
+   */
   ngOnInit() {
     this.examService.startExam().subscribe({
       next: (exam) => {
@@ -58,6 +77,9 @@ export class ExamComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Cleans up the component by stopping the timer and unsubscribing from observables.
+   */
   ngOnDestroy() {
     this.timerService.stopTimer();
     if (this.timerSub) {
@@ -65,10 +87,16 @@ export class ExamComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Starts the exam timer for 120 minutes.
+   */
   private startTimer() {
     this.timerService.startTimer(120 * 60); // 120 minutes
   }
 
+  /**
+   * Gets the current question object.
+   */
   get currentQuestion(): Question | null {
     if (!this.exam || this.exam.questions.length === 0) {
       return null;
@@ -76,10 +104,18 @@ export class ExamComponent implements OnInit, OnDestroy {
     return this.exam.questions[this.currentQuestionIndex].question;
   }
 
+  /**
+   * Checks if a question is multiple-choice (requires more than one correct answer).
+   * @param question The question to check.
+   */
   isMultipleChoice(question: Question): boolean {
     return (question.correctAnswers?.length || 0) > 1;
   }
 
+  /**
+   * Toggles an option selection for the current question.
+   * @param optionLabel The label of the option (e.g., 'A').
+   */
   toggleOption(optionLabel: string) {
     if (!this.currentQuestion) {
       return;
@@ -105,6 +141,10 @@ export class ExamComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Checks if an option is currently selected for the current question.
+   * @param optionLabel The label of the option (e.g., 'A').
+   */
   isSelected(optionLabel: string): boolean {
     if (!this.currentQuestion) {
       return false;
@@ -112,18 +152,27 @@ export class ExamComponent implements OnInit, OnDestroy {
     return (this.answers[this.currentQuestion.id] || []).includes(optionLabel);
   }
 
+  /**
+   * Navigates to the next question.
+   */
   next() {
     if (this.exam && this.currentQuestionIndex < this.exam.questions.length - 1) {
       this.currentQuestionIndex++;
     }
   }
 
+  /**
+   * Navigates to the previous question.
+   */
   prev() {
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
     }
   }
 
+  /**
+   * Submits the exam and navigates to the results page.
+   */
   submit() {
     if (!this.exam) {
       return;

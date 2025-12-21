@@ -5,6 +5,10 @@ import lombok.Data;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Entity representing a certification exam question.
+ * Contains the question text, options, correct answers, and explanation.
+ */
 @Entity
 @Data
 public class Question {

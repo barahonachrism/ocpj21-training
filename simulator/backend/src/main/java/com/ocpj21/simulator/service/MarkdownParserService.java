@@ -17,18 +17,34 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Service class for parsing exam questions and answers from Markdown files.
+ * Automatically loads questions on startup if the database is empty.
+ */
 @Service
 public class MarkdownParserService {
 
     private final QuestionRepository questionRepository;
     private final String bookPath;
 
+    /**
+     * Constructs a MarkdownParserService.
+     *
+     * @param questionRepository the repository for managing Question entities
+     * @param bookPath           the file system path where the book's Markdown
+     *                           files are located
+     */
     public MarkdownParserService(QuestionRepository questionRepository,
             @Value("${book.path:/Users/christian.barahona/Documents/ocpj21-book}") String bookPath) {
         this.questionRepository = questionRepository;
         this.bookPath = bookPath;
     }
 
+    /**
+     * Post-construct hook that triggers the loading of questions from the book
+     * path.
+     * Only loads questions if the database is currently empty.
+     */
     @PostConstruct
     @Transactional
     public void loadQuestions() {
@@ -49,6 +65,12 @@ public class MarkdownParserService {
         }
     }
 
+    /**
+     * Processes a single chapter by reading its question and answer Markdown files.
+     *
+     * @param chapterName the name of the chapter (e.g., "ch01")
+     * @throws IOException if there's an error reading the files
+     */
     private void processChapter(String chapterName) throws IOException {
         Path questionFile = Paths.get(bookPath, chapterName + ".md");
         Path answerFile = Paths.get(bookPath, chapterName + "a.md");
@@ -68,6 +90,13 @@ public class MarkdownParserService {
         System.out.println("Saved " + questions.size() + " questions for " + chapterName);
     }
 
+    /**
+     * Parses the question content from a Markdown string.
+     *
+     * @param content     the Markdown content of the chapter
+     * @param chapterName the name of the chapter
+     * @return a list of parsed Question entities
+     */
     private List<Question> parseQuestions(String content, String chapterName) {
         List<Question> questions = new ArrayList<>();
 
@@ -106,7 +135,11 @@ public class MarkdownParserService {
             }
 
             if (firstOptionIndex != -1) {
-                q.setText(fullText.substring(0, firstOptionIndex).trim());
+                String text = fullText.substring(0, firstOptionIndex).trim();
+                if (text.endsWith("**")) {
+                    text = text.substring(0, text.length() - 2).trim();
+                }
+                q.setText(text);
                 while (optionMatcher.find()) {
                     Option o = new Option();
                     o.setLabel(optionMatcher.group(1));
@@ -114,7 +147,11 @@ public class MarkdownParserService {
                     options.add(o);
                 }
             } else {
-                q.setText(fullText);
+                String text = fullText;
+                if (text.endsWith("**")) {
+                    text = text.substring(0, text.length() - 2).trim();
+                }
+                q.setText(text);
             }
 
             q.setOptions(options);
@@ -124,6 +161,14 @@ public class MarkdownParserService {
         return questions;
     }
 
+    /**
+     * Parses the answers and explanations from a Markdown string and updates the
+     * provided questions.
+     *
+     * @param content   the Markdown content containing the answers
+     * @param questions the list of questions to update with correct answers and
+     *                  explanations
+     */
     private void parseAnswers(String content, List<Question> questions) {
         // Regex for answers: "**N. The correct answer is X.**" or "**N. The correct
         // answers are X and Y.**"
@@ -160,8 +205,12 @@ public class MarkdownParserService {
                 }
 
                 String explanation = content.substring(explanationStart, explanationEnd).trim();
-                // Remove "**Explanation:**" if present
-                explanation = explanation.replace("**Explanation:**", "").trim();
+                // Remove "**Explanation:**" or "**Explanation: **" if present
+                explanation = explanation.replaceAll("(?i)^\\*\\*Explanation:?\\s*", "").trim();
+                // Remove trailing "**" if present
+                if (explanation.endsWith("**")) {
+                    explanation = explanation.substring(0, explanation.length() - 2).trim();
+                }
                 q.setExplanation(explanation);
             }
         }
