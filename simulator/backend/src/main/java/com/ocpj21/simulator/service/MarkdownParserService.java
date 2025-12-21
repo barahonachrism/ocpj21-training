@@ -46,7 +46,6 @@ public class MarkdownParserService {
      * Only loads questions if the database is currently empty.
      */
     @PostConstruct
-    @Transactional
     public void loadQuestions() {
         if (questionRepository.count() > 0) {
             return; // Already loaded

@@ -39,7 +39,12 @@ public class ExamService {
      * @return the newly created Exam entity
      * @throws RuntimeException if no questions are available in the repository
      */
-    @Transactional
+    /**
+     * Starts a new exam by selecting 50 random questions.
+     *
+     * @return the newly created Exam entity
+     * @throws RuntimeException if no questions are available in the repository
+     */
     public Exam startExam() {
         List<Question> allQuestions = questionRepository.findAll();
         if (allQuestions.isEmpty()) {
@@ -58,7 +63,7 @@ public class ExamService {
         List<ExamQuestion> examQuestions = new ArrayList<>();
         for (Question q : selectedQuestions) {
             ExamQuestion eq = new ExamQuestion();
-            eq.setExam(exam);
+            eq.setId(UUID.randomUUID().toString());
             eq.setQuestion(q);
             examQuestions.add(eq);
         }
@@ -76,8 +81,7 @@ public class ExamService {
      * @throws RuntimeException if the exam is not found or has already been
      *                          submitted
      */
-    @Transactional
-    public Exam submitExam(Long examId, Map<Long, List<String>> answers) {
+    public Exam submitExam(String examId, Map<String, List<String>> answers) {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
 
@@ -111,25 +115,17 @@ public class ExamService {
     }
 
     /**
-     * Retrieves an exam by its ID and initializes lazy collections.
+     * Retrieves an exam by its ID.
      *
      * @param id the ID of the exam to retrieve
      * @return the Exam entity
      * @throws RuntimeException if the exam is not found
      */
-    @Transactional(readOnly = true)
-    public Exam getExam(Long id) {
+    public Exam getExam(String id) {
         System.out.println("ExamService: getExam called for id: " + id);
         Exam exam = examRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
-        System.out.println("ExamService: Exam found. Initializing collections...");
-        // Force initialization of lazy collections
-        exam.getQuestions().forEach(eq -> {
-            eq.getSelectedOptions().size();
-            eq.getQuestion().getOptions().size();
-            eq.getQuestion().getCorrectAnswers().size();
-        });
-        System.out.println("ExamService: Collections initialized. Returning exam.");
+        System.out.println("ExamService: Exam found. Returning exam.");
         return exam;
     }
 
@@ -139,8 +135,7 @@ public class ExamService {
      * @param id the ID of the exam
      * @return an ExamResultDTO containing the exam details and results
      */
-    @Transactional(readOnly = true)
-    public com.ocpj21.simulator.dto.ExamResultDTO getExamResult(Long id) {
+    public com.ocpj21.simulator.dto.ExamResultDTO getExamResult(String id) {
         Exam exam = getExam(id);
 
         com.ocpj21.simulator.dto.ExamResultDTO dto = new com.ocpj21.simulator.dto.ExamResultDTO();

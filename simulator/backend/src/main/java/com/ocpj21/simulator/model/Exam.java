@@ -1,22 +1,20 @@
 package com.ocpj21.simulator.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import com.google.cloud.firestore.annotation.DocumentId;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Entity representing an exam session.
+ * Model representing an exam session.
  * Tracks the start and end times, score, and the set of questions included in
  * the exam.
  */
-@Entity
 @Data
 public class Exam {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @DocumentId
+    private String id;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -24,8 +22,5 @@ public class Exam {
     private Integer score; // Number of correct questions
     private Boolean passed;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "exam", fetch = FetchType.EAGER)
-    @lombok.ToString.Exclude
-    @lombok.EqualsAndHashCode.Exclude
     private List<ExamQuestion> questions = new ArrayList<>();
 }

@@ -1,7 +1,7 @@
 /** Represents an answer option for a question. */
 export interface Option {
     /** Unique identifier for the option. */
-    id: number;
+    id: string;
     /** Label of the option (e.g., 'A', 'B'). */
     label: string;
     /** Text content of the option. */
@@ -11,7 +11,7 @@ export interface Option {
 /** Represents a certification exam question. */
 export interface Question {
     /** Unique identifier for the question. */
-    id: number;
+    id: string;
     /** Chapter name the question belongs to. */
     chapter: string;
     /** Question number within the chapter. */
@@ -31,7 +31,7 @@ export interface Question {
 /** Represents an exam session. */
 export interface Exam {
     /** Unique identifier for the exam. */
-    id: number;
+    id: string;
     /** ISO string representing the start time. */
     startTime: string;
     /** ISO string representing the end time. */
@@ -47,7 +47,7 @@ export interface Exam {
 /** Represents a question instance within a specific exam session. */
 export interface ExamQuestion {
     /** Unique identifier for the exam-question link. */
-    id: number;
+    id: string;
     /** The question details. */
     question: Question;
     /** List of option labels selected by the user. */

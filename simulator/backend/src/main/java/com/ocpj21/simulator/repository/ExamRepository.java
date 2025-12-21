@@ -1,12 +1,13 @@
 package com.ocpj21.simulator.repository;
 
 import com.ocpj21.simulator.model.Exam;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 /**
  * Repository interface for Exam entities.
  */
-@Repository
-public interface ExamRepository extends JpaRepository<Exam, Long> {
+public interface ExamRepository {
+    Optional<Exam> findById(String id);
+
+    Exam save(Exam exam);
 }

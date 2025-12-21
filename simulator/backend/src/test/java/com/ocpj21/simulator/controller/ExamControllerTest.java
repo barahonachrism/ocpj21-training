@@ -38,38 +38,38 @@ class ExamControllerTest {
     @Test
     void startExam_ShouldReturnNewExam() throws Exception {
         Exam exam = new Exam();
-        exam.setId(1L);
+        exam.setId("1");
         when(examService.startExam()).thenReturn(exam);
 
         mockMvc.perform(post("/api/exam/start"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.id").value("1"));
     }
 
     @Test
     void submitExam_ShouldReturnUpdatedExam() throws Exception {
         Exam exam = new Exam();
-        exam.setId(1L);
-        Map<Long, List<String>> answers = new HashMap<>();
-        answers.put(1L, List.of("A"));
+        exam.setId("1");
+        Map<String, List<String>> answers = new HashMap<>();
+        answers.put("1", List.of("A"));
 
-        when(examService.submitExam(eq(1L), any())).thenReturn(exam);
+        when(examService.submitExam(eq("1"), any())).thenReturn(exam);
 
         mockMvc.perform(post("/api/exam/1/submit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(answers)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.id").value("1"));
     }
 
     @Test
     void getExam_ShouldReturnExamResult() throws Exception {
         ExamResultDTO dto = new ExamResultDTO();
-        dto.setId(1L);
-        when(examService.getExamResult(1L)).thenReturn(dto);
+        dto.setId("1");
+        when(examService.getExamResult("1")).thenReturn(dto);
 
         mockMvc.perform(get("/api/exam/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.id").value("1"));
     }
 }

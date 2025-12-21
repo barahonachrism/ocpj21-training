@@ -22,7 +22,7 @@ export class ResultsComponent implements OnInit {
   /** Loading state flag. */
   loading = true;
   /** Map of question IDs to their expansion state in the UI. */
-  expandedQuestions: { [key: number]: boolean } = {};
+  expandedQuestions: { [key: string]: boolean } = {};
   /** Error message if loading fails. */
   error: string | null = null;
 
@@ -47,7 +47,7 @@ export class ResultsComponent implements OnInit {
     console.log('ResultsComponent: Exam ID from route:', id);
     if (id) {
       console.log('ResultsComponent: Calling getExam for id:', id);
-      this.examService.getExam(+id).subscribe({
+      this.examService.getExam(id).subscribe({
         next: (exam) => {
           console.log('ResultsComponent: getExam success');
           console.log('ResultsComponent: Full exam object:', JSON.stringify(exam));
@@ -78,7 +78,7 @@ export class ResultsComponent implements OnInit {
    * Toggles the expansion state of a question's details.
    * @param qId The ID of the question.
    */
-  toggleExpand(qId: number) {
+  toggleExpand(qId: string) {
     this.expandedQuestions[qId] = !this.expandedQuestions[qId];
   }
 
@@ -86,7 +86,7 @@ export class ResultsComponent implements OnInit {
    * Checks if a question was answered correctly.
    * @param qId The ID of the question.
    */
-  isCorrect(qId: number): boolean {
+  isCorrect(qId: string): boolean {
     const q = this.exam?.questions.find(eq => eq.question.id === qId);
     return q?.isCorrect || false;
   }

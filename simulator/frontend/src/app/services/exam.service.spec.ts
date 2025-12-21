@@ -25,9 +25,9 @@ describe('ExamService', () => {
     });
 
     it('should start exam', () => {
-        const mockExam: Exam = { id: 1, questions: [], startTime: new Date().toISOString() };
+        const mockExam: Exam = { id: '1', questions: [], startTime: new Date().toISOString() };
         service.startExam().subscribe(exam => {
-            expect(exam.id).toBe(1);
+            expect(exam.id).toBe('1');
         });
 
         const req = httpMock.expectOne('http://127.0.0.1:8080/api/exam/start');
@@ -36,9 +36,9 @@ describe('ExamService', () => {
     });
 
     it('should submit exam', () => {
-        const mockExam: Exam = { id: 1, questions: [], startTime: new Date().toISOString(), endTime: new Date().toISOString(), score: 50, passed: true };
-        const answers = { 1: ['A'] };
-        service.submitExam(1, answers).subscribe(exam => {
+        const mockExam: Exam = { id: '1', questions: [], startTime: new Date().toISOString(), endTime: new Date().toISOString(), score: 50, passed: true };
+        const answers = { '1': ['A'] };
+        service.submitExam('1', answers).subscribe(exam => {
             expect(exam.passed).toBe(true);
         });
 
@@ -48,9 +48,9 @@ describe('ExamService', () => {
     });
 
     it('should get exam result', () => {
-        const mockResult: Exam = { id: 1, questions: [], startTime: new Date().toISOString(), endTime: new Date().toISOString(), score: 50, passed: true };
-        service.getExam(1).subscribe(result => {
-            expect(result.id).toBe(1);
+        const mockResult: Exam = { id: '1', questions: [], startTime: new Date().toISOString(), endTime: new Date().toISOString(), score: 50, passed: true };
+        service.getExam('1').subscribe(result => {
+            expect(result.id).toBe('1');
         });
 
         const req = httpMock.expectOne('http://127.0.0.1:8080/api/exam/1');

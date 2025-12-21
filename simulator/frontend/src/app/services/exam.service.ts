@@ -32,7 +32,7 @@ export class ExamService {
      * @param answers A map of question IDs to selected option labels.
      * @returns An Observable of the updated Exam with results.
      */
-    submitExam(examId: number, answers: { [key: number]: string[] }): Observable<Exam> {
+    submitExam(examId: string, answers: { [key: string]: string[] }): Observable<Exam> {
         return this.http.post<Exam>(`${this.apiUrl}/${examId}/submit`, answers);
     }
 
@@ -41,7 +41,7 @@ export class ExamService {
      * @param examId The ID of the exam.
      * @returns An Observable of the ExamResultDTO (mapped to Exam model).
      */
-    getExam(examId: number): Observable<Exam> {
+    getExam(examId: string): Observable<Exam> {
         return this.http.get<Exam>(`${this.apiUrl}/${examId}`);
     }
 }

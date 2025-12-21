@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class OptionDTO {
-    private Long id;
+    private String id;
     private String label;
     private String text;
 }

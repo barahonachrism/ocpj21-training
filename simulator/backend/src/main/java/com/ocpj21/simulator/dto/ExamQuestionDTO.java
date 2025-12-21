@@ -5,7 +5,7 @@ import java.util.List;
 
 @Data
 public class ExamQuestionDTO {
-    private Long id;
+    private String id;
     private QuestionDTO question;
     private List<String> selectedOptions;
     private Boolean isCorrect;

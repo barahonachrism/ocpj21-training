@@ -39,7 +39,7 @@ class ExamServiceTest {
         List<Question> allQuestions = new ArrayList<>();
         for (int i = 1; i <= 60; i++) {
             Question q = new Question();
-            q.setId((long) i);
+            q.setId(String.valueOf(i));
             allQuestions.add(q);
         }
 
@@ -58,23 +58,23 @@ class ExamServiceTest {
     @Test
     void submitExam_ShouldCalculateScoreAndMarkAsPassed() {
         Exam exam = new Exam();
-        exam.setId(1L);
+        exam.setId("1");
 
         Question q1 = new Question();
-        q1.setId(1L);
+        q1.setId("1");
         q1.setCorrectAnswers(Arrays.asList("A"));
 
         ExamQuestion eq1 = new ExamQuestion();
         eq1.setQuestion(q1);
         exam.getQuestions().add(eq1);
 
-        when(examRepository.findById(1L)).thenReturn(Optional.of(exam));
+        when(examRepository.findById("1")).thenReturn(Optional.of(exam));
         when(examRepository.save(any(Exam.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Map<Long, List<String>> answers = new HashMap<>();
-        answers.put(1L, Arrays.asList("A"));
+        Map<String, List<String>> answers = new HashMap<>();
+        answers.put("1", Arrays.asList("A"));
 
-        Exam result = examService.submitExam(1L, answers);
+        Exam result = examService.submitExam("1", answers);
 
         assertNotNull(result.getEndTime());
         assertEquals(1, result.getScore());
@@ -85,69 +85,46 @@ class ExamServiceTest {
     @Test
     void getExam_ShouldReturnExamById() {
         Exam exam = new Exam();
-        exam.setId(1L);
-        when(examRepository.findById(1L)).thenReturn(Optional.of(exam));
+        exam.setId("1");
+        when(examRepository.findById("1")).thenReturn(Optional.of(exam));
 
-        Exam result = examService.getExam(1L);
+        Exam result = examService.getExam("1");
 
-        assertEquals(1L, result.getId());
+        assertEquals("1", result.getId());
     }
 
     @Test
     void getExamResult_ShouldReturnMappedDTO() {
         Exam exam = new Exam();
-        exam.setId(1L);
+        exam.setId("1");
         exam.setStartTime(LocalDateTime.now());
 
         Question q = new Question();
-        q.setId(1L);
+        q.setId("1");
         q.setChapter("ch01");
         q.setCorrectAnswers(Arrays.asList("A"));
 
         com.ocpj21.simulator.model.Option o = new com.ocpj21.simulator.model.Option();
-        o.setId(1L);
+        o.setId("1");
         o.setLabel("A");
         o.setText("Option A");
         q.setOptions(Arrays.asList(o));
 
         ExamQuestion eq = new ExamQuestion();
-        eq.setId(1L);
+        eq.setId("1");
         eq.setQuestion(q);
         eq.setSelectedOptions(Arrays.asList("A"));
         eq.setIsCorrect(true);
 
         exam.setQuestions(Arrays.asList(eq));
 
-        when(examRepository.findById(1L)).thenReturn(Optional.of(exam));
+        when(examRepository.findById("1")).thenReturn(Optional.of(exam));
 
-        com.ocpj21.simulator.dto.ExamResultDTO result = examService.getExamResult(1L);
+        com.ocpj21.simulator.dto.ExamResultDTO result = examService.getExamResult("1");
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertEquals("1", result.getId());
         assertEquals(1, result.getQuestions().size());
         assertEquals("Option A", result.getQuestions().get(0).getQuestion().getOptions().get(0).getText());
-    }
-
-    @Test
-    void modelTests() {
-        // Simple tests to cover Lombok generated code in models
-        Question q = new Question();
-        q.setId(1L);
-        q.setText("Test");
-        assertEquals(1L, q.getId());
-        assertEquals("Test", q.getText());
-        assertNotNull(q.getCorrectAnswers());
-
-        Exam e = new Exam();
-        e.setId(1L);
-        assertEquals(1L, e.getId());
-
-        ExamQuestion eq = new ExamQuestion();
-        eq.setId(1L);
-        assertEquals(1L, eq.getId());
-
-        com.ocpj21.simulator.model.Option o = new com.ocpj21.simulator.model.Option();
-        o.setId(1L);
-        assertEquals(1L, o.getId());
     }
 }

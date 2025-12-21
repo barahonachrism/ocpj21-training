@@ -47,7 +47,7 @@ public class ExamController {
      * @return a ResponseEntity containing the updated Exam with results
      */
     @PostMapping("/{id}/submit")
-    public ResponseEntity<Exam> submitExam(@PathVariable Long id, @RequestBody Map<Long, List<String>> answers) {
+    public ResponseEntity<Exam> submitExam(@PathVariable String id, @RequestBody Map<String, List<String>> answers) {
         return ResponseEntity.ok(examService.submitExam(id, answers));
     }
 
@@ -58,7 +58,7 @@ public class ExamController {
      * @return a ResponseEntity containing the ExamResultDTO
      */
     @GetMapping("/{id}")
-    public ResponseEntity<com.ocpj21.simulator.dto.ExamResultDTO> getExam(@PathVariable Long id) {
+    public ResponseEntity<com.ocpj21.simulator.dto.ExamResultDTO> getExam(@PathVariable String id) {
         System.out.println("ExamController: getExam request for id: " + id);
         com.ocpj21.simulator.dto.ExamResultDTO exam = examService.getExamResult(id);
         System.out.println("ExamController: getExam retrieved exam for id: " + id);

@@ -27,7 +27,7 @@ export class ExamComponent implements OnInit, OnDestroy {
   /** Index of the current question being displayed. */
   currentQuestionIndex = 0;
   /** Map of question IDs to user-selected option labels. */
-  answers: { [key: number]: string[] } = {};
+  answers: { [key: string]: string[] } = {};
   /** Formatted remaining time string. */
   remainingTime = '02:00:00';
   private timerSub?: Subscription;
